@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = JavaFutureApplication.class)
@@ -73,6 +74,14 @@ public class JavaFutureApplicationTests {
 		Converter<String,Integer> converter = (s) -> new Integer(num);
 
 		Assert.assertEquals(num, converter.convert("1").intValue());
+	}
+
+	@Test
+	public void testPredicate(){
+		Predicate<String> lengthGTEZero = (s) -> s.length() > 0;
+
+		Assert.assertEquals(true, lengthGTEZero.test("a"));
+		Assert.assertEquals(false, lengthGTEZero.negate().test("a"));
 	}
 
 }
