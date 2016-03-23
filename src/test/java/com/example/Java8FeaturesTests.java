@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = JavaFutureApplication.class)
-public class JavaFutureApplicationTests {
+public class Java8FeaturesTests {
 
 	@Test
 	public void contextLoads() {
