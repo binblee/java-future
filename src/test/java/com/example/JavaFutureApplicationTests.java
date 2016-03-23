@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -82,6 +83,13 @@ public class JavaFutureApplicationTests {
 
 		Assert.assertEquals(true, lengthGTEZero.test("a"));
 		Assert.assertEquals(false, lengthGTEZero.negate().test("a"));
+	}
+
+	@Test
+	public void testFunction(){
+		Function<String, Integer> toInteger = Integer::valueOf;
+		Function<String, String> backToString = toInteger.andThen(String::valueOf);
+		Assert.assertEquals("0", backToString.apply("0"));
 	}
 
 }
