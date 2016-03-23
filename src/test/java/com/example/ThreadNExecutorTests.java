@@ -17,4 +17,20 @@ public class ThreadNExecutorTests {
     public void contextLoad(){
 
     }
+
+    @Test
+    public void testRunnable(){
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                String threadName = Thread.currentThread().getName();
+                System.out.println(threadName);
+            }
+        };
+
+        task.run();
+
+        Thread taskThread = new Thread(task);
+        taskThread.start();
+    }
 }
