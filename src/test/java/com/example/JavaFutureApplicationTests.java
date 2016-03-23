@@ -67,4 +67,12 @@ public class JavaFutureApplicationTests {
 		Assert.assertEquals(2,result.intValue());
 	}
 
+	@Test
+	public void testLambdaScope(){
+		int num = 1;
+		Converter<String,Integer> converter = (s) -> new Integer(num);
+
+		Assert.assertEquals(num, converter.convert("1").intValue());
+	}
+
 }
