@@ -28,9 +28,21 @@ public class ThreadNExecutorTests {
             }
         };
 
+        Runnable task2 = () -> {
+            String threadName = Thread.currentThread().getName();
+            System.out.println(threadName);
+        };
+
         task.run();
+        task2.run();
 
         Thread taskThread = new Thread(task);
         taskThread.start();
+
+        new Thread(()->{
+            String threadName = Thread.currentThread().getName();
+            System.out.println(threadName);
+        }).start();
+        
     }
 }
