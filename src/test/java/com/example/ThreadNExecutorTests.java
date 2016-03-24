@@ -5,6 +5,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created by libin on 3/23/16.
  */
@@ -43,6 +46,15 @@ public class ThreadNExecutorTests {
             String threadName = Thread.currentThread().getName();
             System.out.println(threadName);
         }).start();
-        
+
+    }
+
+    @Test
+    public void testSingleThreadExecutor(){
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit(()->{
+            String threadName = Thread.currentThread().getName();
+            System.out.println(threadName);
+        });
     }
 }
