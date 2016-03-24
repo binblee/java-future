@@ -5,8 +5,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created by libin on 3/23/16.
@@ -56,5 +55,26 @@ public class ThreadNExecutorTests {
             String threadName = Thread.currentThread().getName();
             System.out.println(threadName);
         });
+    }
+
+    @Test
+    public void testCallableFuture(){
+        Callable<String> task = () -> {
+            TimeUnit.SECONDS.sleep(1);
+            return "result from callable";
+        };
+
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        Future<String> future = executorService.submit(task);
+
+        String result = "";
+        try {
+            result = future.get();
+        }catch (ExecutionException e){
+            System.out.println(e.getMessage());
+        }catch (InterruptedException e){
+            System.out.println(e.getMessage());
+        }
+        System.out.println(result);
     }
 }
