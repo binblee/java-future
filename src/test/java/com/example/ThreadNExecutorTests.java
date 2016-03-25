@@ -112,4 +112,17 @@ public class ThreadNExecutorTests {
                 }
         ).forEach(System.out::println);
     }
+
+    @Test
+    public void testInvokeAny() throws Exception{
+        List<Callable<String>> tasks = Arrays.asList(
+                () -> "invoke any: task 1",
+                () -> "invoke any: task 2",
+                () -> "invoke any: task 3"
+        );
+
+        ExecutorService executorService = Executors.newWorkStealingPool();
+        String result = executorService.invokeAny(tasks);
+        System.out.println(result);
+    }
 }
