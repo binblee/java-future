@@ -125,4 +125,17 @@ public class ThreadNExecutorTests {
         String result = executorService.invokeAny(tasks);
         System.out.println(result);
     }
+
+    @Test
+    public void testScheduledExecutor() throws Exception{
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+        Runnable task = () -> System.out.printf("scheduled at %d\n", System.nanoTime());
+
+        ScheduledFuture<?> scheduledFuture = executorService.schedule(task, 3, TimeUnit.SECONDS);
+        TimeUnit.MICROSECONDS.sleep(1337);
+        long remaining = scheduledFuture.getDelay(TimeUnit.MILLISECONDS);
+        System.out.printf("Remaining: %sms\n", remaining);
+
+        scheduledFuture.get();
+    }
 }
