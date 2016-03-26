@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -136,6 +137,34 @@ public class SynchronizationNLockTests {
 
         executorService.submit(readTask);
         executorService.submit(readTask);
+        ConcurrentUtils.stop(executorService);
+    }
+
+    @Test
+    public void testSemaphore(){
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        Semaphore semaphore = new Semaphore(5);
+
+        Runnable task = () -> {
+            boolean permit = false;
+            try {
+                permit = semaphore.tryAcquire(1,TimeUnit.SECONDS);
+                if(permit){
+                    System.out.println("got one");
+                    ConcurrentUtils.sleep(5);
+                }else{
+                    System.out.println("failed to get one");
+                }
+            }catch (InterruptedException e){
+                throw new IllegalStateException(e);
+            }finally {
+                if(permit){
+                    semaphore.release();
+                }
+            }
+        };
+
+        IntStream.range(0, 10).forEach(i -> executorService.submit(task));
         ConcurrentUtils.stop(executorService);
     }
 }
