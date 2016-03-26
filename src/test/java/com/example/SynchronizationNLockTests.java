@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.StampedLock;
 import java.util.stream.IntStream;
 
 /**
@@ -85,11 +86,8 @@ public class SynchronizationNLockTests {
         executorService.submit(()->{
             lock.writeLock().lock();
             try{
-                TimeUnit.SECONDS.sleep(1);
+                ConcurrentUtils.sleep(1);
                 map.put("foo","bar");
-
-            }catch (Exception e){
-
             }finally {
                 lock.writeLock().unlock();
             }
@@ -99,9 +97,7 @@ public class SynchronizationNLockTests {
             lock.readLock().lock();
             try{
                 System.out.println(map.get("foo"));
-                TimeUnit.SECONDS.sleep(1);
-            }catch(Exception e){
-
+                ConcurrentUtils.sleep(1);
             }finally {
                 lock.readLock().unlock();
             }
@@ -110,6 +106,36 @@ public class SynchronizationNLockTests {
         executorService.submit(readTask);
         executorService.submit(readTask);
 
+        ConcurrentUtils.stop(executorService);
+    }
+
+    @Test
+    public void testStampedLock(){
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Map<String,String> map = new HashMap<>();
+        StampedLock lock = new StampedLock();
+        executorService.submit(()->{
+            long stamp = lock.writeLock();
+            try{
+                ConcurrentUtils.sleep(1);
+                map.put("foo","bar");
+            }finally {
+                lock.unlockWrite(stamp);
+            }
+        });
+
+        Runnable readTask = () -> {
+            long stamp = lock.writeLock();
+            try{
+                System.out.println(map.get("foo"));
+                ConcurrentUtils.sleep(1);
+            }finally {
+                lock.unlockWrite(stamp);
+            }
+        };
+
+        executorService.submit(readTask);
+        executorService.submit(readTask);
         ConcurrentUtils.stop(executorService);
     }
 }
