@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.IntStream;
 
 /**
@@ -46,5 +47,14 @@ public class AtomicVariableNConcurrentMapTests {
         );
         ConcurrentUtils.stop(executorService);
         Assert.assertEquals(3000, atomicInteger.get());
+    }
+
+    @Test
+    public void testLongAdder(){
+        LongAdder longAdder = new LongAdder();
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        IntStream.range(0, 1000).forEach(i -> executorService.submit(longAdder::increment));
+        ConcurrentUtils.stop(executorService);
+        Assert.assertEquals(1000,longAdder.sumThenReset());
     }
 }
