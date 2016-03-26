@@ -34,4 +34,17 @@ public class AtomicVariableNConcurrentMapTests {
         ConcurrentUtils.stop(executorService);
         Assert.assertEquals(1000, atomicInteger.get());
     }
+
+    @Test
+    public void testAtomicIntegerUpdateAndGet(){
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Runnable task = () -> atomicInteger.updateAndGet((n) -> n+3);
+        IntStream.range(0,1000).forEach(i -> {
+            executorService.submit(task);
+        }
+        );
+        ConcurrentUtils.stop(executorService);
+        Assert.assertEquals(3000, atomicInteger.get());
+    }
 }
