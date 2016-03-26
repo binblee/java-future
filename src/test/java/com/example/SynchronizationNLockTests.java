@@ -7,9 +7,16 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.IntStream;
 
 /**
@@ -68,5 +75,41 @@ public class SynchronizationNLockTests {
         IntStream.range(0, 1000).forEach(i -> executorService.submit(this::lockedIncrease));
         ConcurrentUtils.stop(executorService);
         Assert.assertEquals(1000,count);
+    }
+
+    @Test
+    public void testReadWriteLock(){
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        Map<String, String> map = new HashMap<>();
+        ReadWriteLock lock = new ReentrantReadWriteLock();
+        executorService.submit(()->{
+            lock.writeLock().lock();
+            try{
+                TimeUnit.SECONDS.sleep(1);
+                map.put("foo","bar");
+
+            }catch (Exception e){
+
+            }finally {
+                lock.writeLock().unlock();
+            }
+        });
+
+        Runnable readTask = ()->{
+            lock.readLock().lock();
+            try{
+                System.out.println(map.get("foo"));
+                TimeUnit.SECONDS.sleep(1);
+            }catch(Exception e){
+
+            }finally {
+                lock.readLock().unlock();
+            }
+        };
+
+        executorService.submit(readTask);
+        executorService.submit(readTask);
+
+        ConcurrentUtils.stop(executorService);
     }
 }
